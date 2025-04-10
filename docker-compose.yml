@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/books/Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./backend/books/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - go-mod:/go/pkg/mod
+
+  mysql:
+    build: ./MySQL/
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3036:3036"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+
+volumes:
+  mysql-data:
+  go-mod:
