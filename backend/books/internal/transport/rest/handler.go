@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/DexScen/WebBook/internal/domain"
+	"github.com/DexScen/WebBook/backend/books/internal/domain"
 	"github.com/gorilla/mux"
 )
 
@@ -28,21 +28,24 @@ func NewHandler(books Books) *Handler {
 }
 
 func (h *Handler) InitRouter() *mux.Router {
-    r := mux.NewRouter().StrictSlash(true)
-    r.Use(loggingMiddleware)
+	r := mux.NewRouter().StrictSlash(true)
+	r.Use(loggingMiddleware)
 
-    links := r.PathPrefix("/books").Subrouter()
-    {
-        links.HandleFunc("", h.GetBooks).Methods(http.MethodGet)
-        links.HandleFunc("/add", h.PostBook).Methods(http.MethodPost)
-        links.HandleFunc("/delete", h.DeleteBookByID).Methods(http.MethodDelete)
-        links.HandleFunc("/patch", h.PatchBook).Methods(http.MethodPatch)
-    }
+	links := r.PathPrefix("/books").Subrouter()
+	{
+		links.HandleFunc("", h.GetBooks).Methods(http.MethodGet)
+		links.HandleFunc("/add", h.PostBook).Methods(http.MethodPost)
+		links.HandleFunc("/delete", h.DeleteBookByID).Methods(http.MethodDelete)
+		links.HandleFunc("/patch", h.PatchBook).Methods(http.MethodPatch)
+	}
 
-    return r
+	return r
 }
 
 func (h *Handler) GetBooks(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var list domain.ListBooks
 	if err := h.booksService.GetBooks(context.TODO(), &list); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -61,14 +64,12 @@ func (h *Handler) GetBooks(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) PostBook(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var book domain.Book
-	var data []byte
-	if _, err := r.Body.Read(data); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		log.Println("postBook error:", err)
-		return
-	}
-	if err := json.Unmarshal(data, &book); err != nil {
+
+	if err := json.NewDecoder(r.Body).Decode(&book); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("postBook error:", err)
 		return
@@ -84,6 +85,9 @@ func (h *Handler) PostBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteBookByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var req domain.DeleteRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -101,14 +105,12 @@ func (h *Handler) DeleteBookByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) PatchBook(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var book domain.Book
-	var data []byte
-	if _, err := r.Body.Read(data); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		log.Println("PatchBook error:", err)
-		return
-	}
-	if err := json.Unmarshal(data, &book); err != nil {
+
+	if err := json.NewDecoder(r.Body).Decode(&book); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("PatchBook error:", err)
 		return

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -10,24 +8,51 @@ services:
     env_file:
       - ./backend/books/.env
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
     restart: unless-stopped
     volumes:
       - go-mod:/go/pkg/mod
+    networks:
+        - app-network
 
-  mysql:
-    build: ./MySQL/
-    volumes:
-      - mysql-data:/var/lib/mysql
-    ports:
-      - "3036:3036"
+  postgres:
+    build: ./PostgreSQL
+    container_name: my_postgres
+    restart: always
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "postgres" ]
       interval: 5s
-      timeout: 10s
-      retries: 10
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qwerty123
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+        - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "81:80"  
+    volumes:
+      - ./frontend:/usr/share/nginx/html   
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
-  mysql-data:
+  postgres_data:
   go-mod:
+  frontend:

@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/DexScen/WebBook/internal/domain"
+	"github.com/DexScen/WebBook/backend/books/internal/domain"
 )
 
 type BooksRepository interface{

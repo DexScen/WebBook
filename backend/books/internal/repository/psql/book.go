@@ -3,21 +3,21 @@ package msql
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
-	"github.com/DexScen/WebBook/internal/domain"
+	"github.com/DexScen/WebBook/backend/books/internal/domain"
+	_ "github.com/lib/pq"
 )
 
-
-
-type Books struct{
+type Books struct {
 	db *sql.DB
 }
 
-func NewBooks(db *sql.DB) *Books{
+func NewBooks(db *sql.DB) *Books {
 	return &Books{db: db}
 }
 
-func (b *Books) GetBooks(ctx context.Context, list *domain.ListBooks) error{
+func (b *Books) GetBooks(ctx context.Context, list *domain.ListBooks) error {
 	rows, err := b.db.Query("SELECT id, title, author, year FROM books")
 	if err != nil {
 		return err
@@ -37,20 +37,20 @@ func (b *Books) GetBooks(ctx context.Context, list *domain.ListBooks) error{
 	return err
 }
 
-func (b *Books) PostBook(ctx context.Context, book *domain.Book) error{
+func (b *Books) PostBook(ctx context.Context, book *domain.Book) error {
 	tr, err := b.db.Begin()
-	if err != nil{
+	if err != nil {
 		return err
 	}
-
-	statement, err := tr.Prepare("INSERT INTO books (id, title, author, year) VALUES ($1, $2, $3, $4)")
+	fmt.Println(*book)
+	statement, err := tr.Prepare("INSERT INTO books (title, author, year) VALUES ($1, $2, $3)")
 	if err != nil {
 		tr.Rollback()
 		return err
 	}
 	defer statement.Close()
 
-	_, err = statement.Exec(book.ID, book.Title, book.Author, book.Year)
+	_, err = statement.Exec(book.Title, book.Author, book.Year)
 	if err != nil {
 		tr.Rollback()
 		return err
@@ -59,13 +59,13 @@ func (b *Books) PostBook(ctx context.Context, book *domain.Book) error{
 	return tr.Commit()
 }
 
-func (b *Books) DeleteBookByID(ctx context.Context, id int) error{
+func (b *Books) DeleteBookByID(ctx context.Context, id int) error {
 	tr, err := b.db.Begin()
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
-	statement, err := tr.Prepare("DELETE FROM books WHERE id = %1")
+	statement, err := tr.Prepare("DELETE FROM books WHERE id = $1")
 	if err != nil {
 		tr.Rollback()
 		return err
@@ -81,9 +81,9 @@ func (b *Books) DeleteBookByID(ctx context.Context, id int) error{
 	return tr.Commit()
 }
 
-func (b *Books) PatchBook(ctx context.Context, book *domain.Book) error{
+func (b *Books) PatchBook(ctx context.Context, book *domain.Book) error {
 	tr, err := b.db.Begin()
-	if err != nil{
+	if err != nil {
 		return err
 	}
 

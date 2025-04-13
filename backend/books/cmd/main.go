@@ -7,22 +7,21 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/DexScen/WebBook/internal/repository/msql"
-	"github.com/DexScen/WebBook/internal/service"
-	"github.com/DexScen/WebBook/internal/transport/rest"
-	"github.com/DexScen/WebBook/pkg/database"
-
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/DexScen/WebBook/backend/books/internal/repository/psql"
+	"github.com/DexScen/WebBook/backend/books/internal/service"
+	"github.com/DexScen/WebBook/backend/books/internal/transport/rest"
+	"github.com/DexScen/WebBook/backend/books/pkg/database"
 )
 
 func main() {
 	port, _ := strconv.Atoi(os.Getenv("DB_PORT"))
-	db, err := database.NewMySQLConnection(database.ConnectionInfo{
+	db, err := database.NewPostgresConnection(database.ConnectionInfo{
 		Host:     os.Getenv("DB_HOST"),
 		Port:     port,
 		Username: os.Getenv("DB_USER"),
 		DBName:   os.Getenv("DB_NAME"),
 		Password: os.Getenv("DB_PASSWORD"),
+		SSLMode: "disable",
 	})
 
 	if err != nil {
