@@ -4,22 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Список книг</title>
-    <link rel="stylesheet" href="css/main.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        #pagination button {
+            padding: 5px 15px;
+            margin: 0 5px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #pagination button:hover {
+            background-color: #007b8a;
+        }
+
+        #add-book-form {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        #add-book-form input {
+            padding: 5px;
+            margin: 0 10px;
+        }
+
+        #add-book-form button {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <h1>Список книг</h1>
-    
-    <table id="books-table">
+
+    <form id="add-book-form">
+        <input type="text" id="title" placeholder="Название книги" required>
+        <input type="text" id="author" placeholder="Автор" required>
+        <input type="number" id="price" placeholder="Цена" required>
+        <button type="submit">Добавить книгу</button>
+    </form>
+
+    <table>
         <thead>
             <tr>
-                <th class="header">Название</th>
-                <th class="header">Автор</th>
-                <th class="header">Год</th>
+                <th>Название</th>
+                <th>Автор</th>
+                <th>Цена</th>
+                <th>Действия</th>
             </tr>
         </thead>
-        <tbody id="book-list">
-        </tbody>
+        <tbody id="book-table-body"></tbody>
     </table>
+
+    <div id="pagination">
+    </div>
 
     <script src="js/app.js"></script>
 </body>

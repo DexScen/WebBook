@@ -4,10 +4,10 @@ type Book struct {
 	ID     int    `json:"id"`
 	Title  string `json:"title"`
 	Author string `json:"author"`
-	Year   int    `json:"year"`
+	Price  int    `json:"price"`
 }
 
-type DeleteRequest struct{
+type DeleteRequest struct {
 	ID int `json:"id"`
 }
 

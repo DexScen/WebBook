@@ -1,5 +1,5 @@
 services:
-  backend:
+  backend-books:
     build:
       context: .
       dockerfile: ./backend/books/Dockerfile
@@ -40,7 +40,7 @@ services:
     build:
       context: ./frontend
     depends_on:
-      - backend
+      - backend-books
     ports:
       - "81:80"  
     volumes:

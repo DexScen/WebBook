@@ -14,7 +14,7 @@ type Books interface {
 	GetBooks(ctx context.Context, list *domain.ListBooks) error
 	PostBook(ctx context.Context, book *domain.Book) error
 	DeleteBookByID(ctx context.Context, id int) error
-	PatchBook(ctx context.Context, book *domain.Book) error
+	PutBook(ctx context.Context, book *domain.Book) error
 }
 
 type Handler struct {
@@ -27,6 +27,17 @@ func NewHandler(books Books) *Handler {
 	}
 }
 
+func setHeaders(w http.ResponseWriter) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+}
+
+func (h *Handler) OptionsHandler(w http.ResponseWriter, r *http.Request) {
+	setHeaders(w)
+	w.WriteHeader(http.StatusOK)
+}
+
 func (h *Handler) InitRouter() *mux.Router {
 	r := mux.NewRouter().StrictSlash(true)
 	r.Use(loggingMiddleware)
@@ -34,18 +45,16 @@ func (h *Handler) InitRouter() *mux.Router {
 	links := r.PathPrefix("/books").Subrouter()
 	{
 		links.HandleFunc("", h.GetBooks).Methods(http.MethodGet)
-		links.HandleFunc("/add", h.PostBook).Methods(http.MethodPost)
-		links.HandleFunc("/delete", h.DeleteBookByID).Methods(http.MethodDelete)
-		links.HandleFunc("/patch", h.PatchBook).Methods(http.MethodPatch)
+		links.HandleFunc("", h.PostBook).Methods(http.MethodPost)
+		links.HandleFunc("", h.DeleteBookByID).Methods(http.MethodDelete)
+		links.HandleFunc("", h.PutBook).Methods(http.MethodPut)
+		links.HandleFunc("", h.OptionsHandler).Methods(http.MethodOptions)
 	}
-
 	return r
 }
 
 func (h *Handler) GetBooks(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	setHeaders(w)
 	var list domain.ListBooks
 	if err := h.booksService.GetBooks(context.TODO(), &list); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -64,9 +73,7 @@ func (h *Handler) GetBooks(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) PostBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	setHeaders(w)
 	var book domain.Book
 
 	if err := json.NewDecoder(r.Body).Decode(&book); err != nil {
@@ -85,9 +92,7 @@ func (h *Handler) PostBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteBookByID(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	setHeaders(w)
 	var req domain.DeleteRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -104,10 +109,8 @@ func (h *Handler) DeleteBookByID(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Handler) PatchBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+func (h *Handler) PutBook(w http.ResponseWriter, r *http.Request) {
+	setHeaders(w)
 	var book domain.Book
 
 	if err := json.NewDecoder(r.Body).Decode(&book); err != nil {
@@ -116,7 +119,7 @@ func (h *Handler) PatchBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.booksService.PatchBook(context.TODO(), &book); err != nil {
+	if err := h.booksService.PutBook(context.TODO(), &book); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("PatchBook error:", err)
 		return

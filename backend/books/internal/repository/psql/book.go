@@ -18,7 +18,7 @@ func NewBooks(db *sql.DB) *Books {
 }
 
 func (b *Books) GetBooks(ctx context.Context, list *domain.ListBooks) error {
-	rows, err := b.db.Query("SELECT id, title, author, year FROM books")
+	rows, err := b.db.Query("SELECT id, title, author, price FROM books")
 	if err != nil {
 		return err
 	}
@@ -27,7 +27,7 @@ func (b *Books) GetBooks(ctx context.Context, list *domain.ListBooks) error {
 	for rows.Next() {
 		var book domain.Book
 
-		err := rows.Scan(&book.ID, &book.Title, &book.Author, &book.Year)
+		err := rows.Scan(&book.ID, &book.Title, &book.Author, &book.Price)
 		if err != nil {
 			return err
 		}
@@ -43,14 +43,14 @@ func (b *Books) PostBook(ctx context.Context, book *domain.Book) error {
 		return err
 	}
 	fmt.Println(*book)
-	statement, err := tr.Prepare("INSERT INTO books (title, author, year) VALUES ($1, $2, $3)")
+	statement, err := tr.Prepare("INSERT INTO books (title, author, price) VALUES ($1, $2, $3)")
 	if err != nil {
 		tr.Rollback()
 		return err
 	}
 	defer statement.Close()
 
-	_, err = statement.Exec(book.Title, book.Author, book.Year)
+	_, err = statement.Exec(book.Title, book.Author, book.Price)
 	if err != nil {
 		tr.Rollback()
 		return err
@@ -81,7 +81,7 @@ func (b *Books) DeleteBookByID(ctx context.Context, id int) error {
 	return tr.Commit()
 }
 
-func (b *Books) PatchBook(ctx context.Context, book *domain.Book) error {
+func (b *Books) PutBook(ctx context.Context, book *domain.Book) error {
 	tr, err := b.db.Begin()
 	if err != nil {
 		return err
@@ -89,7 +89,7 @@ func (b *Books) PatchBook(ctx context.Context, book *domain.Book) error {
 
 	statement, err := tr.Prepare(`
 	UPDATE books 
-	SET title = $1, author = $2, year =$3 
+	SET title = $1, author = $2, price =$3 
 	WHERE id = $4
 	`)
 	if err != nil {
@@ -98,7 +98,7 @@ func (b *Books) PatchBook(ctx context.Context, book *domain.Book) error {
 	}
 	defer statement.Close()
 
-	_, err = statement.Exec(book.Title, book.Author, book.Year, book.ID)
+	_, err = statement.Exec(book.Title, book.Author, book.Price, book.ID)
 	if err != nil {
 		tr.Rollback()
 		return err
