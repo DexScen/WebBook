@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	msql "github.com/DexScen/WebBook/backend/auth/internal/repository/psql"
+	psql "github.com/DexScen/WebBook/backend/auth/internal/repository/psql"
 	"github.com/DexScen/WebBook/backend/auth/internal/service"
 	"github.com/DexScen/WebBook/backend/auth/internal/transport/rest"
 	"github.com/DexScen/WebBook/backend/auth/pkg/database"
@@ -29,9 +29,9 @@ func main() {
 	}
 	defer db.Close()
 
-	usersRepo := msql.NewUsers(db)
-	usersService := service.NewBooks(usersRepo)
-	handler := rest.NewHandler(usersService)
+	usersRepo := psql.NewUsers(db)
+	usersService := service.NewUsers(usersRepo)
+	handler := rest.NewUsers(usersService)
 
 	srv := &http.Server{
 		Addr:    ":8081",

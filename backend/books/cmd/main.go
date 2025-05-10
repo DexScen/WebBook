@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	msql "github.com/DexScen/WebBook/backend/books/internal/repository/psql"
+	psql "github.com/DexScen/WebBook/backend/books/internal/repository/psql"
 	"github.com/DexScen/WebBook/backend/books/internal/service"
 	"github.com/DexScen/WebBook/backend/books/internal/transport/rest"
 	"github.com/DexScen/WebBook/backend/books/pkg/database"
@@ -29,7 +29,7 @@ func main() {
 	}
 	defer db.Close()
 
-	booksRepo := msql.NewBooks(db)
+	booksRepo := psql.NewBooks(db)
 	booksService := service.NewBooks(booksRepo)
 	handler := rest.NewHandler(booksService)
 

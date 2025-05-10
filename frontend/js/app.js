@@ -1,3 +1,7 @@
+document.addEventListener('DOMContentLoaded', () => {
+    createButtons();
+    fetchBooks();
+});
 
 const booksPerPage = 10;  
 let allBooks = [];  
@@ -176,4 +180,30 @@ document.getElementById('add-book-form').addEventListener('submit', async (e) =>
     }
 });
 
-fetchBooks();
+
+function createButtons() {
+    const buttonsBody = document.getElementById('buttons');
+
+    if (buttonsBody.innerHTML !== '') {
+        return;
+    }
+    
+    buttonsBody.innerHTML = '';  
+    
+    const registerButton = document.createElement('button')
+    registerButton.textContent = 'Регистрация';
+    registerButton.onclick = () => goReg();
+    buttonsBody.appendChild(registerButton);
+    const loginButton = document.createElement('button');
+    loginButton.textContent = 'Логин';
+    loginButton.onclick = () => goLog();
+    buttonsBody.appendChild(loginButton);
+}
+
+function goReg(){
+    window.location.href = `register.html`; 
+}
+
+function goLog(){
+    window.location.href = `login.html`; 
+}
