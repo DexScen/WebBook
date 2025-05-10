@@ -121,3 +121,34 @@ func (u *Users) UserExists(ctx context.Context, login, email string) (bool, erro
 
 	return exists, nil
 }
+
+// GetByLogin retrieves a user by login
+func (u *Users) GetByLogin(ctx context.Context, login string) (*domain.User, error) {
+	tr, err := u.db.Begin()
+	if err != nil {
+		return nil, err
+	}
+	
+	statement, err := tr.Prepare("SELECT login, name, email, password, role FROM users WHERE login = $1")
+	if err != nil {
+		tr.Rollback()
+		return nil, err
+	}
+	defer statement.Close()
+
+	var user domain.User
+	err = statement.QueryRow(login).Scan(&user.Login, &user.Name, &user.Email, &user.Password, &user.Role)
+	if err != nil {
+		tr.Rollback()
+		if err == sql.ErrNoRows {
+			return nil, errors.ErrUserNotFound
+		}
+		return nil, err
+	}
+
+	if err := tr.Commit(); err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}

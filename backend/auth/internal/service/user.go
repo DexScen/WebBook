@@ -14,6 +14,7 @@ type UsersRepository interface {
 	GetPassword(ctx context.Context, login string) (string, error)
 	GetRole(ctx context.Context, login string) (string, error)
 	UserExists(ctx context.Context, login, email string) (bool, error)
+	GetByLogin(ctx context.Context, login string) (*domain.User, error)
 }
 
 type Users struct {
@@ -66,4 +67,11 @@ func (u *Users) Register(ctx context.Context, user *domain.User) error {
 		Role:     user.Role,
 	})
 	// check unique login + check ajax l8r
+}
+
+// GetByLogin returns a user by login
+func (u *Users) GetByLogin(ctx context.Context, login string) (*domain.User, error) {
+	// Implement logic to get user by login
+	// This requires a new repository method
+	return u.repo.GetByLogin(ctx, login)
 }

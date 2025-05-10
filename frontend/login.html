@@ -3,51 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Авторизация</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
-            padding: 50px;
-        }
-        h1 {
-            text-align: center;
-        }
-        .form-container {
-            max-width: 400px;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        .form-container input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .form-container button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .form-container button:hover {
-            background-color: #45a049;
-        }
-        .form-container p {
-            text-align: center;
-        }
-    </style>
+    <title>Вход</title>
+    <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
-
-    <h1>Авторизация</h1>
+    <h1>Вход</h1>
 
     <div class="form-container">
         <form id="login-form">
@@ -58,38 +18,6 @@
         <p>Нет аккаунта? <a href="register.html">Зарегистрироваться</a></p>
     </div>
 
-    <script>
-        // Обработчик формы авторизации
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
-
-            // Отправляем данные на сервер для авторизации
-            fetch('http://localhost:8080/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, password })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Сохраняем токен в localStorage для использования в дальнейшем
-                    localStorage.setItem('authToken', data.token);
-                    alert('Авторизация успешна!');
-                    window.location.href = 'index.html';  // Переход на главную страницу
-                } else {
-                    alert('Ошибка авторизации: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Ошибка при авторизации.');
-            });
-        });
-    </script>
+    <script src="js/login.js"></script>
 </body>
 </html>

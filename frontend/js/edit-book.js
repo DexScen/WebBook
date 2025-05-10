@@ -1,3 +1,17 @@
+// Функция для получения роли пользователя
+function getUserRole() {
+    return localStorage.getItem('userRole') || 'guest';
+}
+
+// Проверяем права доступа - только администратор может редактировать книги
+document.addEventListener('DOMContentLoaded', function() {
+    if (getUserRole() !== 'admin') {
+        alert('У вас нет прав для редактирования книг');
+        window.location.href = 'index.html';
+        return;
+    }
+});
+
 const urlParams = new URLSearchParams(window.location.search);
 const bookId = urlParams.get('id');  
 const bookPrice = urlParams.get('price'); 
@@ -13,7 +27,14 @@ async function loadBookData() {
 }
 
 async function updateBook(event) {
-    event.preventDefault();  
+    event.preventDefault();
+    
+    // Повторная проверка прав перед отправкой запроса
+    if (getUserRole() !== 'admin') {
+        alert('У вас нет прав для редактирования книг');
+        window.location.href = 'index.html';
+        return;
+    }
 
     const title = document.getElementById('title').value;
     const author = document.getElementById('author').value;

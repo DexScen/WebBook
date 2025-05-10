@@ -15,6 +15,7 @@ import (
 type Users interface {
 	Register(ctx context.Context, user *domain.User) error
 	LogIn(ctx context.Context, login, password string) (string, error)
+	GetByLogin(ctx context.Context, login string) (*domain.User, error) // Новый метод
 }
 
 type Handler struct {
@@ -46,6 +47,7 @@ func (h *Handler) InitRouter() *mux.Router {
 	{
 		links.HandleFunc("/login", h.LogIn).Methods(http.MethodPost)
 		links.HandleFunc("/register", h.Register).Methods(http.MethodPost)
+		links.HandleFunc("/check-login", h.CheckLogin).Methods(http.MethodGet) // Новый маршрут
 		links.HandleFunc("", h.OptionsHandler).Methods(http.MethodOptions)
 	}
 	return r
@@ -122,4 +124,46 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 			w.Write(jsonResp)
 		}
 	}
+}
+
+// CheckLogin проверяет, доступен ли указанный логин для регистрации
+func (h *Handler) CheckLogin(w http.ResponseWriter, r *http.Request) {
+    setHeaders(w)
+    
+    // Получаем логин из query параметров
+    login := r.URL.Query().Get("login")
+    if login == "" {
+        w.WriteHeader(http.StatusBadRequest)
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "available": false,
+            "error": "login parameter is required",
+        })
+        return
+    }
+
+    // Проверяем существование пользователя
+    _, err := h.usersService.GetByLogin(r.Context(), login)
+    if err != nil {
+        if errors.Is(err, e.ErrUserNotFound) {
+            // Пользователь не найден - логин доступен
+            w.Header().Set("Content-Type", "application/json")
+            json.NewEncoder(w).Encode(map[string]interface{}{
+                "available": true,
+            })
+            return
+        }
+        // Другая ошибка
+        w.WriteHeader(http.StatusInternalServerError)
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "available": false,
+            "error": "internal server error",
+        })
+        return
+    }
+
+    // Пользователь найден - логин занят
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(map[string]interface{}{
+        "available": false,
+    })
 }

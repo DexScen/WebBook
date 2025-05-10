@@ -4,47 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация</title>
-    <style>
-        /* Добавим немного стилей для улучшения внешнего вида */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
-            padding: 50px;
-        }
-        h1 {
-            text-align: center;
-        }
-        .form-container {
-            max-width: 400px;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        .form-container input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .form-container button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .form-container button:hover {
-            background-color: #45a049;
-        }
-        .form-container p {
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="css/register.css">
 </head>
 <body>
 
@@ -53,42 +13,19 @@
     <div class="form-container">
         <form id="register-form">
             <input type="text" id="register-username" placeholder="Логин" required>
+            <input type="text" id="register-email" placeholder="Email" required>
+            <input type="text" id="register-name" placeholder="Имя пользователя" required>
             <input type="password" id="register-password" placeholder="Пароль" required>
+            <select id="register-role" required>
+                <option value="" disabled selected>Выберите роль</option>
+                <option value="user">Пользователь</option>
+                <option value="admin">Администратор</option>
+            </select>
             <button type="submit">Зарегистрироваться</button>
         </form>
         <p>Уже есть аккаунт? <a href="login.html">Войти</a></p>
     </div>
 
-    <script>
-        // Обработчик формы регистрации
-        document.getElementById('register-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const username = document.getElementById('register-username').value;
-            const password = document.getElementById('register-password').value;
-
-            // Отправляем данные на сервер для регистрации
-            fetch('http://localhost:8080/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, password })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Регистрация успешна! Теперь вы можете войти.');
-                    window.location.href = 'login.html';  // Переход на страницу авторизации
-                } else {
-                    alert('Ошибка регистрации: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Ошибка при регистрации.');
-            });
-        });
-    </script>
+    <script src="js/registration.js"></script>
 </body>
 </html>
