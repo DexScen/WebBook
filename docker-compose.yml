@@ -59,7 +59,7 @@ services:
     depends_on:
       - backend-books
     ports:
-      - "81:80"  
+      - "81:80"
     volumes:
       - ./frontend:/usr/share/nginx/html   
     networks:

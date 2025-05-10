@@ -108,7 +108,7 @@ func (u *Users) UserExists(ctx context.Context, login, email string) (bool, erro
 	}
 	defer statement.Close()
 
-	var exists bool // Changed from string to bool
+	var exists bool 
 	err = statement.QueryRow(login, email).Scan(&exists)
 	if err != nil {
 		tr.Rollback()
@@ -122,7 +122,6 @@ func (u *Users) UserExists(ctx context.Context, login, email string) (bool, erro
 	return exists, nil
 }
 
-// GetByLogin retrieves a user by login
 func (u *Users) GetByLogin(ctx context.Context, login string) (*domain.User, error) {
 	tr, err := u.db.Begin()
 	if err != nil {

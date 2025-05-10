@@ -126,11 +126,9 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// CheckLogin проверяет, доступен ли указанный логин для регистрации
 func (h *Handler) CheckLogin(w http.ResponseWriter, r *http.Request) {
     setHeaders(w)
     
-    // Получаем логин из query параметров
     login := r.URL.Query().Get("login")
     if login == "" {
         w.WriteHeader(http.StatusBadRequest)
@@ -141,18 +139,15 @@ func (h *Handler) CheckLogin(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Проверяем существование пользователя
     _, err := h.usersService.GetByLogin(r.Context(), login)
     if err != nil {
         if errors.Is(err, e.ErrUserNotFound) {
-            // Пользователь не найден - логин доступен
             w.Header().Set("Content-Type", "application/json")
             json.NewEncoder(w).Encode(map[string]interface{}{
                 "available": true,
             })
             return
         }
-        // Другая ошибка
         w.WriteHeader(http.StatusInternalServerError)
         json.NewEncoder(w).Encode(map[string]interface{}{
             "available": false,
@@ -161,7 +156,6 @@ func (h *Handler) CheckLogin(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Пользователь найден - логин занят
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(map[string]interface{}{
         "available": false,

@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('register-password');
     const roleSelect = document.getElementById('register-role');
 
-    // Добавляем стили для индикации валидации
     const style = document.createElement('style');
     style.textContent = `
         .input-valid {
@@ -42,13 +41,11 @@ document.addEventListener('DOMContentLoaded', function() {
         input.className = isValid ? 'input-valid' : 'input-invalid';
     }
 
-    // Валидация email
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
 
-    // Валидация пароля
     function isValidPassword(password) {
         return password.length >= 6;
     }
@@ -90,10 +87,8 @@ document.addEventListener('DOMContentLoaded', function() {
     usernameInput.addEventListener('input', function() {
         const login = this.value.trim();
         
-        // Очищаем предыдущий таймаут
         clearTimeout(loginCheckTimeout);
         
-        // Устанавливаем новый таймаут для проверки
         loginCheckTimeout = setTimeout(async () => {
             if (login.length < 3) {
                 addValidationMessage(
@@ -117,20 +112,17 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        // Получаем значения полей
         const login = usernameInput.value.trim();
         const email = emailInput.value.trim();
         const name = nameInput.value.trim();
         const password = passwordInput.value;
         const role = roleSelect.value;
 
-        // Проверяем все поля
         if (!login || !email || !name || !password || !role) {
             alert('Пожалуйста, заполните все поля');
             return;
         }
 
-        // Проверяем валидность email и пароля
         if (!isValidEmail(email)) {
             alert('Пожалуйста, введите корректный email');
             return;

@@ -1,9 +1,8 @@
-// Функция для получения роли пользователя
 function getUserRole() {
     return localStorage.getItem('userRole') || 'guest';
 }
 
-// Проверяем права доступа - только администратор может редактировать книги
+// Проверяем права доступа
 document.addEventListener('DOMContentLoaded', function() {
     if (getUserRole() !== 'admin') {
         alert('У вас нет прав для редактирования книг');

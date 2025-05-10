@@ -150,11 +150,6 @@ function changePage(page) {
     updatePagination();  
 }
 
-
-
-// Глобальные функции editBook и deleteBook удалены, так как они теперь
-// реализованы внутри renderBooks с использованием addEventListener
-
 document.getElementById('add-book-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 

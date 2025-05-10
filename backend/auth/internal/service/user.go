@@ -66,12 +66,8 @@ func (u *Users) Register(ctx context.Context, user *domain.User) error {
 		Email:    user.Email,
 		Role:     user.Role,
 	})
-	// check unique login + check ajax l8r
 }
 
-// GetByLogin returns a user by login
 func (u *Users) GetByLogin(ctx context.Context, login string) (*domain.User, error) {
-	// Implement logic to get user by login
-	// This requires a new repository method
 	return u.repo.GetByLogin(ctx, login)
 }
